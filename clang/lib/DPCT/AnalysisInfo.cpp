@@ -1481,8 +1481,8 @@ DpctGlobalInfo::getLocInfo(SourceLocation Loc, bool *IsInvalid) {
     *IsInvalid = true;
   return std::make_pair(clang::tooling::UnifiedPath(), 0);
 }
-std::string DpctGlobalInfo::getTypeName(QualType QT,
-                                        const ASTContext &Context) {
+std::string DpctGlobalInfo::getTypeName(QualType QT, const ASTContext &Context,
+                                        bool SuppressScope) {
   if (auto ET = QT->getAs<ElaboratedType>()) {
     if (ET->getQualifier())
       QT = Context.getElaboratedType(ElaboratedTypeKeyword::None,
@@ -1491,7 +1491,12 @@ std::string DpctGlobalInfo::getTypeName(QualType QT,
     else
       QT = ET->getNamedType();
   }
+  auto TT = QT->getAs<TypedefType>();
+  if (TT && SuppressScope) {
+    return TT->getDecl()->getNameAsString();
+  }
   auto PP = Context.getPrintingPolicy();
+  PP.SuppressScope = SuppressScope;
   PP.SuppressTagKeyword = true;
   return QT.getAsString(PP);
 }
