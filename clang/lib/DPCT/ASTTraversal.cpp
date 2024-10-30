@@ -8651,7 +8651,17 @@ void MemVarRefMigrationRule::runRule(const MatchFinder::MatchResult &Result) {
           Info->setInitForDeviceGlobal(InitStr);
         }
       }
-      if (!Info->getType()->isArray()) {
+      auto VarType = Info->getType();
+      if (VarType->isArray()) {
+        if (const auto *const ICE =
+                dyn_cast_or_null<ImplicitCastExpr>(Parent)) {
+          if (ICE->getCastKind() == CK_ArrayToPointerDecay) {
+            if (!dyn_cast_or_null<ArraySubscriptExpr>(getParentStmt(ICE))) {
+              emplaceTransformation(new InsertAfterStmt(MemVarRef, ".get()"));
+            }
+          }
+        }
+      } else {
         emplaceTransformation(new InsertAfterStmt(MemVarRef, ".get()"));
       }
       return;
