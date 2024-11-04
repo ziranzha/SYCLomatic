@@ -43,7 +43,7 @@ TEST(ReplacementsYamlTest, serializesReplacements) {
                "    Length:          2\n"
                "    ReplacementText: 'replacement #2'\n"
                "...\n",
-               YamlContentStream.str().c_str());
+               YamlContent.c_str());
 }
 
 TEST(ReplacementsYamlTest, serializesNewLines) {
@@ -78,8 +78,12 @@ TEST(ReplacementsYamlTest, serializesNewLines) {
                "    Length:          0\n"
                "    ReplacementText: \"#include <utility>\\n\"\n"
                "...\n",
+<<<<<<< HEAD
                YamlContentStream.str().c_str());
 #endif // SYCLomatic_CUSTOMIZATION
+=======
+               YamlContent.c_str());
+>>>>>>> origin/sycl
 }
 
 TEST(ReplacementsYamlTest, deserializesReplacements) {

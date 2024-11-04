@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 sphinx==8.0.2
+=======
+sphinx==8.1.3
+>>>>>>> origin/sycl
 docutils==0.21.2
 sphinx-markdown-tables==0.0.17
 recommonmark==0.7.1

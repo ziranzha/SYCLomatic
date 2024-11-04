@@ -43,7 +43,12 @@ SYCLomatic supports migrating programs implemented with CUDA versions 8.0, 9.x, 
   * Windows: `Visual Studio` 2019 or 2022 (In the following description, assume that the version used is 2019) -
     [Download](https://visualstudio.microsoft.com/downloads/)
 
+<<<<<<< HEAD
 Note: SYCLomatic can be built from source without any CUDA dependencies. However, before migration of CUDA codebases to SYCL, ensure that CUDA header files are accessible to the tool. These header files are necessary for SYCLomatic to properly understand and process CUDA code during the migration process.
+=======
+Project documentation is available at:
+[DPC++ Documentation](https://intel.github.io/llvm/).
+>>>>>>> origin/sycl
 
 ### Create SYCLomatic workspace
 
