@@ -93,3 +93,4 @@ jobs:
     with:
       mode: stop
       runs-on-list: '[{"runs-on":"aws-cuda_${{ github.run_id }}-${{ github.run_attempt }}","aws-ami":"ami-01cb0573cb039ab24","aws-type":["g5.2xlarge","g5.4xlarge"],"aws-disk":"/dev/sda1:64","aws-spot":"false"}]'
+

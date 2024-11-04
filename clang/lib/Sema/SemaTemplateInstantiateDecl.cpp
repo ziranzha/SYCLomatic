@@ -3982,17 +3982,10 @@ Decl *TemplateDeclInstantiator::VisitUsingEnumDecl(UsingEnumDecl *D) {
 
   TypeSourceInfo *TSI = SemaRef.SubstType(D->getEnumType(), TemplateArgs,
                                           D->getLocation(), D->getDeclName());
-<<<<<<< HEAD
-#ifdef SYCLomatic_CUSTOMIZATION
-  if (!TSI)
-    return nullptr;
-#endif
-=======
 
   if (!TSI)
     return nullptr;
 
->>>>>>> origin/sycl
   UsingEnumDecl *NewUD =
       UsingEnumDecl::Create(SemaRef.Context, Owner, D->getUsingLoc(),
                             D->getEnumLoc(), D->getLocation(), TSI);

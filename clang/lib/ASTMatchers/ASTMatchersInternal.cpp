@@ -541,32 +541,9 @@ public:
   /// that didn't match.
   /// Return true if there are still any patterns left.
   bool consumeNameSuffix(StringRef NodeName, bool CanSkip) {
-<<<<<<< HEAD
 #ifdef SYCLomatic_CUSTOMIZATION
-    bool IsEmpty=true;
+    bool IsEmpty = true;
 #endif // SYCLomatic_CUSTOMIZATION
-    for (size_t I = 0; I < Patterns.size();) {
-#ifdef SYCLomatic_CUSTOMIZATION
-      if (!Patterns[I].IsValid) {
-        I++;
-        continue;
-      }
-#endif // SYCLomatic_CUSTOMIZATION
-      if (::clang::ast_matchers::internal::consumeNameSuffix(Patterns[I].P,
-                                                             NodeName) ||
-          CanSkip) {
-        ++I;
-#ifdef SYCLomatic_CUSTOMIZATION
-        IsEmpty = false;
-#endif // SYCLomatic_CUSTOMIZATION
-      } else {
-#ifdef SYCLomatic_CUSTOMIZATION
-        Patterns[I].IsValid = false;
-        I++;
-#else
-        Patterns.erase(Patterns.begin() + I);
-#endif // SYCLomatic_CUSTOMIZATION
-=======
     if (CanSkip) {
       // If we can skip the node, then we need to handle the case where a
       // skipped node has the same name as its parent.
@@ -575,12 +552,29 @@ public:
       // To do this, any patterns that match should be duplicated in our set,
       // one of them with the tail removed.
       for (size_t I = 0, E = Patterns.size(); I != E; ++I) {
-        StringRef Pattern = Patterns[I].P;
-        if (ast_matchers::internal::consumeNameSuffix(Patterns[I].P, NodeName))
-          Patterns.push_back({Pattern, Patterns[I].IsFullyQualified});
->>>>>>> origin/sycl
+#ifdef SYCLomatic_CUSTOMIZATION
+      if (!Patterns[I].IsValid) {
+        I++;
+        continue;
       }
-    } else {
+#endif // SYCLomatic_CUSTOMIZATION
+      
+        StringRef Pattern = Patterns[I].P;
+#ifdef SYCLomatic_CUSTOMIZATION
+if (ast_matchers::internal::consumeNameSuffix(Patterns[I].P,
+                                                      NodeName)) {
+        IsEmpty = false;
+#else
+        if (ast_matchers::internal::consumeNameSuffix(Patterns[I].P, NodeName))
+#endif // SYCLomatic_CUSTOMIZATION
+Patterns.push_back({Pattern, Patterns[I].IsFullyQualified});
+#ifdef SYCLomatic_CUSTOMIZATION
+      } else {
+        Patterns[I].IsValid = false;
+        }
+#endif
+      }
+      else {
       llvm::erase_if(Patterns, [&NodeName](auto &Pattern) {
         return !::clang::ast_matchers::internal::consumeNameSuffix(Pattern.P,
                                                                    NodeName);

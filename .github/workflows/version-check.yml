@@ -29,3 +29,4 @@ jobs:
         run: |
           version=$(grep -o 'LLVM_VERSION_\(MAJOR\|MINOR\|PATCH\) [0-9]\+' cmake/Modules/LLVMVersion.cmake  | cut -d ' ' -f 2 | tr "\n" "." | sed 's/.$//g')
           .github/workflows/version-check.py "$version"
+

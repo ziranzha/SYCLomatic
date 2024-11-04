@@ -181,11 +181,7 @@ std::string Driver::GetResourcesPath(StringRef BinaryPath) {
   // exact same string ("a/../b/" and "b/" get different hashes, for example).
 
   // Dir is bin/ or lib/, depending on where BinaryPath is.
-<<<<<<< HEAD
-  std::string Dir = std::string(llvm::sys::path::parent_path(BinaryPath));
-=======
   StringRef Dir = llvm::sys::path::parent_path(BinaryPath);
->>>>>>> origin/sycl
   SmallString<128> P(Dir);
 
   StringRef ConfiguredResourceDir(CLANG_RESOURCE_DIR);

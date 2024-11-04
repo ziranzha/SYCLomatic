@@ -490,3 +490,4 @@ jobs:
       shell: bash
       run: |
         ninja -C ${{ steps.setup-stage.outputs.build-prefix }}/build stage2-check-all
+

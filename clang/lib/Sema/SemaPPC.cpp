@@ -251,14 +251,10 @@ bool SemaPPC::CheckPPCBuiltinFunctionCall(const TargetInfo &TI,
     return BuiltinPPCMMACall(TheCall, BuiltinID, Types);
 #include "clang/Basic/BuiltinsPPC.def"
   }
-<<<<<<< HEAD
 #ifdef SYCLomatic_CUSTOMIZATION
 #else
-  return SemaRef.BuiltinConstantArgRange(TheCall, i, l, u);
+    llvm_unreachable("must return from switch");
 #endif
-=======
-  llvm_unreachable("must return from switch");
->>>>>>> origin/sycl
 }
 
 // Check if the given type is a non-pointer PPC MMA type. This function is used

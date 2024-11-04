@@ -68,7 +68,7 @@ TEST(ReplacementsYamlTest, serializesNewLines) {
                "    Length:          0\n"
                "    ReplacementText: '#include <utility>\n'\n"
                "...\n",
-               YamlContentStream.str().c_str());
+               YamlContent.c_str());
 #else
   ASSERT_STREQ("---\n"
                "MainSourceFile:  '/path/to/source.cpp'\n"
@@ -78,12 +78,8 @@ TEST(ReplacementsYamlTest, serializesNewLines) {
                "    Length:          0\n"
                "    ReplacementText: \"#include <utility>\\n\"\n"
                "...\n",
-<<<<<<< HEAD
-               YamlContentStream.str().c_str());
-#endif // SYCLomatic_CUSTOMIZATION
-=======
                YamlContent.c_str());
->>>>>>> origin/sycl
+#endif // SYCLomatic_CUSTOMIZATION
 }
 
 TEST(ReplacementsYamlTest, deserializesReplacements) {

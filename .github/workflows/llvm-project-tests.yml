@@ -146,3 +146,4 @@ jobs:
           # The libclc tests don't have a generated check target so all we can
           # do is build it.
           ninja -C "$LLVM_BUILDDIR"
+

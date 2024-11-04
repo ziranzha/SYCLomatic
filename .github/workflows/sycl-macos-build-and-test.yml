@@ -56,3 +56,4 @@ jobs:
           --cmake-opt="-DSYCL_PI_TESTS=OFF"
     - name: Compile
       run: cmake --build $GITHUB_WORKSPACE/build --target deploy-sycl-toolchain
+

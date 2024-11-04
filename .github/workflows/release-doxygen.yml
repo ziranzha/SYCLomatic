@@ -71,3 +71,4 @@ jobs:
           USER_TOKEN: ${{ secrets.RELEASE_TASKS_USER_TOKEN }}
         run: |
           ./llvm/utils/release/github-upload-release.py --token "$GITHUB_TOKEN" --release "${{ inputs.release-version }}" --user "${{ github.actor }}" --user-token "$USER_TOKEN" upload --files ./*doxygen*.tar.xz
+

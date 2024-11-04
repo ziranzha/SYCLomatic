@@ -363,7 +363,6 @@ private:
   static const uint64_t MaxCounterValue = (1ULL << 56);
 
 public:
-<<<<<<< HEAD
 #ifdef SYCLomatic_CUSTOMIZATION
   RawInstrProfReader(std::unique_ptr<MemoryBuffer> DataBuffer,
                      const InstrProfCorrelator *Correlator,
@@ -377,16 +376,7 @@ public:
         NamesStart(nullptr), NamesEnd(nullptr), ValueDataStart(nullptr),
         ValueKindLast(0), CurValueDataSize(0), BinaryIds({}), Warn(Warn) {}
 #else
-  RawInstrProfReader(std::unique_ptr<MemoryBuffer> DataBuffer,
-                     const InstrProfCorrelator *Correlator,
-                     std::function<void(Error)> Warn)
-      : DataBuffer(std::move(DataBuffer)),
-        Correlator(dyn_cast_or_null<const InstrProfCorrelatorImpl<IntPtrT>>(
-            Correlator)),
-        Warn(Warn) {}
-#endif // SYCLomatic_CUSTOMIZATION
-=======
-  RawInstrProfReader(
+    RawInstrProfReader(
       std::unique_ptr<MemoryBuffer> DataBuffer,
       const InstrProfCorrelator *Correlator,
       const object::BuildIDFetcher *BIDFetcher,
@@ -397,8 +387,8 @@ public:
             Correlator)),
         BIDFetcher(BIDFetcher),
         BIDFetcherCorrelatorKind(BIDFetcherCorrelatorKind), Warn(Warn) {}
+#endif // SYCLomatic_CUSTOMIZATION
 
->>>>>>> origin/sycl
   RawInstrProfReader(const RawInstrProfReader &) = delete;
   RawInstrProfReader &operator=(const RawInstrProfReader &) = delete;
 

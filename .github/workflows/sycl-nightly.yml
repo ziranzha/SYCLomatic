@@ -260,3 +260,4 @@ jobs:
         tags: |
           ghcr.io/${{ github.repository }}/sycl_ubuntu2204_nightly:build-${{ github.sha }}
           ghcr.io/${{ github.repository }}/sycl_ubuntu2204_nightly:build
+
