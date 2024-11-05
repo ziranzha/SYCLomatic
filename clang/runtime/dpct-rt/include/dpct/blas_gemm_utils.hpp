@@ -62,7 +62,15 @@ private:
 
 class matrix_layout_t {
 public:
-  enum class attribute { type, order, rows, cols, ld };
+  enum class attribute {
+    type,
+    order,
+    rows,
+    cols,
+    ld,
+    batch_count,
+    strided_batch_offset
+  };
 
   matrix_layout_t(library_data_t type, std::uint64_t rows, std::uint64_t cols,
                   std::int64_t ld)
@@ -91,6 +99,8 @@ private:
       CASE(rows)
       CASE(cols)
       CASE(ld)
+      CASE(batch_count)
+      CASE(strided_batch_offset)
     }
 #undef CASE
   }
@@ -100,6 +110,8 @@ private:
   std::uint64_t _rows;
   std::uint64_t _cols;
   std::int64_t _ld;
+  std::uint64_t _batch_count = 1;
+  std::uint64_t _strided_batch_offset = 0;
 
   friend sycl::event matmul(descriptor_ptr handle, matmul_desc_ptr computeDesc,
                             const void *alpha, const void *a,
