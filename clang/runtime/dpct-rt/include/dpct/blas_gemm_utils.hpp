@@ -137,6 +137,8 @@ public:
     trans_b,
     trans_c,
     epilogue,
+    epilogue_aux_ld,
+    epilogue_aux_pointer,
     a_scale_pointer,
     b_scale_pointer,
     d_scale_pointer,
@@ -178,6 +180,8 @@ private:
       CASE(b_scale_pointer)
       CASE(d_scale_pointer)
       CASE(absmax_d_pointer)
+      CASE(epilogue_aux_ld)
+      CASE(epilogue_aux_pointer)
     default:
       break;
     }
@@ -191,10 +195,12 @@ private:
   oneapi::mkl::transpose _trans_b = oneapi::mkl::transpose::nontrans;
   oneapi::mkl::transpose _trans_c = oneapi::mkl::transpose::nontrans;
   epilogue_t _epilogue = epilogue_t::nop;
+  size_t _epilogue_aux_ld = 0;
   void *_a_scale_pointer = nullptr;
   void *_b_scale_pointer = nullptr;
   void *_d_scale_pointer = nullptr;
   void *_absmax_d_pointer = nullptr;
+  void *_epilogue_aux_pointer = nullptr;
 
   friend sycl::event matmul(descriptor_ptr handle, matmul_desc_ptr computeDesc,
                             const void *alpha, const void *a,
