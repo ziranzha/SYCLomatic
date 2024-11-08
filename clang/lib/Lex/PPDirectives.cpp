@@ -1136,14 +1136,9 @@ Preprocessor::LookupEmbedFile(StringRef Filename, bool isAngled, bool OpenFile,
     SeparateComponents(LookupPath, Entry, Filename, false);
     llvm::Expected<FileEntryRef> ShouldBeEntry =
         FM.getFileRef(LookupPath, OpenFile);
-#ifdef SYCLomatic_CUSTOMIZATION
-    if (auto Result = llvm::expectedToOptional(std::move(ShouldBeEntry)))
-      return Result;
-#else
-        if (ShouldBeEntry)
-      return llvm::expectedToOptional(std::move(ShouldBeEntry));
+    if (ShouldBeEntry)
+        return llvm::expectedToOptional(std::move(ShouldBeEntry));
     llvm::consumeError(ShouldBeEntry.takeError());
-#endif // SYCLomatic_CUSTOMIZATION
   }
   return std::nullopt;
 }

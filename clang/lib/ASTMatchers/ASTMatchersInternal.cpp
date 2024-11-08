@@ -553,28 +553,27 @@ public:
       // one of them with the tail removed.
       for (size_t I = 0, E = Patterns.size(); I != E; ++I) {
 #ifdef SYCLomatic_CUSTOMIZATION
-      if (!Patterns[I].IsValid) {
-        I++;
-        continue;
-      }
+        if (!Patterns[I].IsValid) {
+          continue;
+        }
 #endif // SYCLomatic_CUSTOMIZATION
-      
+
         StringRef Pattern = Patterns[I].P;
 #ifdef SYCLomatic_CUSTOMIZATION
-if (ast_matchers::internal::consumeNameSuffix(Patterns[I].P,
+        if (ast_matchers::internal::consumeNameSuffix(Patterns[I].P,
                                                       NodeName)) {
-        IsEmpty = false;
+          IsEmpty = false;
 #else
         if (ast_matchers::internal::consumeNameSuffix(Patterns[I].P, NodeName))
 #endif // SYCLomatic_CUSTOMIZATION
-Patterns.push_back({Pattern, Patterns[I].IsFullyQualified});
+          Patterns.push_back({Pattern, Patterns[I].IsFullyQualified});
 #ifdef SYCLomatic_CUSTOMIZATION
-      } else {
-        Patterns[I].IsValid = false;
+        } else {
+          Patterns[I].IsValid = false;
         }
 #endif
       }
-      else {
+    } else {
       llvm::erase_if(Patterns, [&NodeName](auto &Pattern) {
         return !::clang::ast_matchers::internal::consumeNameSuffix(Pattern.P,
                                                                    NodeName);

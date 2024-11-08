@@ -364,12 +364,17 @@ private:
 
 public:
 #ifdef SYCLomatic_CUSTOMIZATION
-  RawInstrProfReader(std::unique_ptr<MemoryBuffer> DataBuffer,
-                     const InstrProfCorrelator *Correlator,
-                     std::function<void(Error)> Warn)
+  RawInstrProfReader(
+      std::unique_ptr<MemoryBuffer> DataBuffer,
+      const InstrProfCorrelator *Correlator,
+      const object::BuildIDFetcher *BIDFetcher,
+      const InstrProfCorrelator::ProfCorrelatorKind BIDFetcherCorrelatorKind,
+      std::function<void(Error)> Warn)
       : DataBuffer(std::move(DataBuffer)),
         Correlator(dyn_cast_or_null<const InstrProfCorrelatorImpl<IntPtrT>>(
             Correlator)),
+        BIDFetcher(BIDFetcher),
+        BIDFetcherCorrelatorKind(BIDFetcherCorrelatorKind),
         ShouldSwapBytes(false), Version(0), CountersDelta(0), BitmapDelta(0),
         NamesDelta(0), Data(nullptr), DataEnd(nullptr), CountersStart(nullptr),
         CountersEnd(nullptr), BitmapStart(nullptr), BitmapEnd(nullptr),

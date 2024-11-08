@@ -1886,7 +1886,7 @@ void DpctGlobalInfo::generateHostCode(tooling::Replacements &ProcessedReplList,
   unsigned int Pos, Len;
   std::string OriginText = Info.FuncContentCache;
   StringRef SR(OriginText);
-  RewriteBuffer RB;
+  llvm::RewriteBuffer RB;
   RB.Initialize(SR.begin(), SR.end());
   for (const auto &R : ProcessedReplList) {
     unsigned ROffset = R.getOffset();
