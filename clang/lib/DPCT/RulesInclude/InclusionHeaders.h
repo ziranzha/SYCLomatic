@@ -38,6 +38,14 @@ enum class RuleGroupKind : uint8_t {
   NUM
 };
 
+enum class LibraryDependencies : uint8_t {
+  LD_MKL,
+  LD_DPL,
+  LD_DNN,
+  LD_CCL,
+  NUMS
+};
+
 struct DpctInclusionInfo {
   enum InclusionFlag {
     IF_MarkInserted,
@@ -54,21 +62,26 @@ struct DpctInclusionInfo {
 class RuleGroups {
   using FlagsType = uint64_t;
 
-  FlagsType Flags = flag(RuleGroupKind::RK_Common);
-
   static constexpr FlagsType flag(RuleGroupKind K) {
     return 1 << static_cast<uint8_t>(K);
   }
 
+  FlagsType Flags = flag(RuleGroupKind::RK_Common);
+
 public:
   void enableRuleGroup(RuleGroupKind K) { Flags |= flag(K); }
-  bool isEnabled(RuleGroupKind K) const { return Flags & flag(K); }
-  bool isMKLEnabled() const {
-    static constexpr FlagsType MKLFlag =
+  bool isEnabled(RuleGroupKind K) const noexcept { return Flags & flag(K); }
+  bool isDependsOn(LibraryDependencies LD) const noexcept {
+    static FlagsType LibraryFlags[] = {
         flag(RuleGroupKind::RK_BLas) | flag(RuleGroupKind::RK_Sparse) |
-        flag(RuleGroupKind::RK_Solver) | flag(RuleGroupKind::RK_FFT) |
-        flag(RuleGroupKind::RK_Rng);
-    return Flags & MKLFlag;
+            flag(RuleGroupKind::RK_Solver) | flag(RuleGroupKind::RK_FFT) |
+            flag(RuleGroupKind::RK_Rng),
+        flag(RuleGroupKind::RK_Thrust) | flag(RuleGroupKind::RK_CUB),
+        flag(RuleGroupKind::RK_DNN), flag(RuleGroupKind::RK_NCCL)};
+    return Flags & LibraryFlags[static_cast<uint8_t>(LD)];
+  }
+  bool isMKLEnabled() const noexcept {
+    return isDependsOn(LibraryDependencies::LD_MKL);
   }
 };
 
