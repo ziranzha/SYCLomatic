@@ -175,8 +175,8 @@ SourceRange getStmtExpansionSourceRange(const Stmt *S) {
       isInRange(SM.getExpansionRange(Range.getBegin()).getBegin(),
                 SM.getExpansionRange(Range.getBegin()).getEnd(),
                 SM.getSpellingLoc(Range.getBegin())) &&
-      isInRange(SM.getExpansionRange(Range.getBegin()).getBegin(),
-                SM.getExpansionRange(Range.getBegin()).getEnd(),
+      isInRange(SM.getExpansionRange(Range.getEnd()).getBegin(),
+                SM.getExpansionRange(Range.getEnd()).getEnd(),
                 SM.getSpellingLoc(Range.getEnd()))) {
     // MACRO(callExpr())
     BeginLoc = SM.getSpellingLoc(Range.getBegin());
@@ -2050,7 +2050,7 @@ getTheOneBeforeLastImmediateExapansion(const clang::SourceLocation Begin,
 // Line 3: #define CALL_KERNEL(C, D) KERNEL(C, D); int a = 0;
 // Line 4: void templatefoo2() { CALL_KERNEL(8, 9) }
 // There are 3 candidates of the kernel range,
-// 1. Line 4 "CALL_KERNEL2(8, AAA)"
+// 1. Line 4 "CALL_KERNEL(8, 9)"
 // 2. Line 3 "KERNEL(C, D)"
 // 3. Line 2 "templatefoo<A,B>CCC"
 // The 3rd candidate is the best choice.
@@ -2154,7 +2154,7 @@ void traversePossibleLocations(const SourceLocation &SL,
   if (!SL.isValid())
     return;
   if (Cache.find(SL.getHashValue()) != Cache.end())
-    return;
+    return; // If visited, return;
   Cache.insert(SL.getHashValue());
   if (!SL.isMacroID()) {
     if (isInRange(RangeBegin, RangeEnd, SL)) {
