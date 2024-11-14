@@ -530,20 +530,13 @@ public:
   PatternSet(ArrayRef<std::string> Names) {
     Patterns.reserve(Names.size());
     for (StringRef Name : Names)
-#ifdef SYCLomatic_CUSTOMIZATION
-      Patterns.push_back({Name, Name.starts_with("::"), true});
-#else
       Patterns.push_back({Name, Name.starts_with("::")});
-#endif // SYCLomatic_CUSTOMIZATION
   }
 
   /// Consumes the name suffix from each pattern in the set and removes the ones
   /// that didn't match.
   /// Return true if there are still any patterns left.
   bool consumeNameSuffix(StringRef NodeName, bool CanSkip) {
-#ifdef SYCLomatic_CUSTOMIZATION
-    bool IsEmpty = true;
-#endif // SYCLomatic_CUSTOMIZATION
     if (CanSkip) {
       // If we can skip the node, then we need to handle the case where a
       // skipped node has the same name as its parent.
@@ -552,26 +545,9 @@ public:
       // To do this, any patterns that match should be duplicated in our set,
       // one of them with the tail removed.
       for (size_t I = 0, E = Patterns.size(); I != E; ++I) {
-#ifdef SYCLomatic_CUSTOMIZATION
-        if (!Patterns[I].IsValid) {
-          continue;
-        }
-#endif // SYCLomatic_CUSTOMIZATION
-
         StringRef Pattern = Patterns[I].P;
-#ifdef SYCLomatic_CUSTOMIZATION
-        if (ast_matchers::internal::consumeNameSuffix(Patterns[I].P,
-                                                      NodeName)) {
-          IsEmpty = false;
-#else
         if (ast_matchers::internal::consumeNameSuffix(Patterns[I].P, NodeName))
-#endif // SYCLomatic_CUSTOMIZATION
           Patterns.push_back({Pattern, Patterns[I].IsFullyQualified});
-#ifdef SYCLomatic_CUSTOMIZATION
-        } else {
-          Patterns[I].IsValid = false;
-        }
-#endif
       }
     } else {
       llvm::erase_if(Patterns, [&NodeName](auto &Pattern) {
@@ -579,37 +555,23 @@ public:
                                                                    NodeName);
       });
     }
-#ifdef SYCLomatic_CUSTOMIZATION
-    return !IsEmpty;
-#else
     return !Patterns.empty();
-#endif // SYCLomatic_CUSTOMIZATION
   }
 
   /// Check if any of the patterns are a match.
   /// A match will be a pattern that was fully consumed, that also matches the
   /// 'fully qualified' requirement.
   bool foundMatch(bool AllowFullyQualified) const {
-#ifdef SYCLomatic_CUSTOMIZATION
-    return llvm::any_of(Patterns, [&](const Pattern &Pattern) {
-      return Pattern.IsValid && Pattern.P.empty() &&
-             (AllowFullyQualified || !Pattern.IsFullyQualified);
-    });
-#else
     return llvm::any_of(Patterns, [&](const Pattern &Pattern) {
       return Pattern.P.empty() &&
              (AllowFullyQualified || !Pattern.IsFullyQualified);
     });
-#endif // SYCLomatic_CUSTOMIZATION
   }
 
 private:
   struct Pattern {
     StringRef P;
     bool IsFullyQualified;
-#ifdef SYCLomatic_CUSTOMIZATION
-    bool IsValid;
-#endif // SYCLomatic_CUSTOMIZATION
   };
 
 #ifdef SYCLomatic_CUSTOMIZATION
