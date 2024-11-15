@@ -15,7 +15,7 @@
 #include "AnalysisInfo.h"
 #include "MigrationRuleManager.h"
 #include "RulesSecurity/MisleadingBidirectional.h"
-#include "Statics.h"
+#include "MigrationReport/Statics.h"
 
 #ifdef _WIN32
 #include <Windows.h>
