@@ -67,7 +67,7 @@ void recordRecognizedAPI(const CallExpr *CE);
 void recordRecognizedType(TypeLoc TL);
 
 class RuleGroups;
-void setDependenciesInfo(const RuleGroups &);
+void setDependenciesInfo(const RuleGroups &) noexcept;
 
 } // namespace dpct
 } // namespace clang

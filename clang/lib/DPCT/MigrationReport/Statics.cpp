@@ -324,17 +324,22 @@ public:
     }
     Total.dump(OS, Indent);
     if (DependencyBits.Flag) {
-      LineStream(OS, Indent)
-          << llvm::raw_ostream::Colors::BLUE
-          << "Library Dependencies of SYCL Project:" << llvm::raw_ostream::Colors::RESET;
-      static std::string DependenceNames[] = {
-          "oneAPI Math Kernel Library (oneMKL)", "oneAPI DPC++ Library(oneDPL)",
-          "oneAPI Deep Neural Network Library (oneDNN)",
-          "oneAPI Collective Communications Library(oneCCL)"};
+      LineStream(OS, Indent) << llvm::raw_ostream::Colors::BLUE
+                             << "Library Dependencies of SYCL Project:"
+                             << llvm::raw_ostream::Colors::RESET;
+      struct DependenceNames {
+        llvm::StringRef Strs[static_cast<uint8_t>(LibraryDependencies::NUMS)];
+        DependenceNames() noexcept {
+#define LIBRARY(LIBNAME, LIBDESC, ...)                                         \
+  Strs[static_cast<uint8_t>(LibraryDependencies::LD_##LIBNAME)] = LIBDESC;
+#include "Libraries.inc"
+        }
+      } Names;
       auto EntryIndent = Indent + AnalysisModeSummary::IndentIncremental;
-      for (unsigned i = 0; i < static_cast<uint8_t>(LibraryDependencies::NUMS); ++i) {
+      for (unsigned i = 0; i < static_cast<uint8_t>(LibraryDependencies::NUMS);
+           ++i) {
         if (DependencyBits[i])
-          LineStream(OS, EntryIndent) << "- The Intel " << DependenceNames[i];
+          LineStream(OS, EntryIndent) << "- The Intel " << Names.Strs[i];
       }
     }
     LineStream(OS, Indent) << LastMsg;
@@ -353,10 +358,11 @@ public:
                            unsigned Offset, EffortLevel EL) {
     AnalysisModeStaticsMap[Filename.getPath()].recordEffort(Offset, EL);
   }
-  static void setDependencies(const RuleGroups &Group) {
+  static void setDependencies(const RuleGroups &Group) noexcept {
     for (unsigned i = 0; i < static_cast<uint8_t>(LibraryDependencies::NUMS);
          ++i) {
-      DependencyBits.Flag |= Group.isDependsOn(static_cast<LibraryDependencies>(i)) << i;
+      DependencyBits.Flag |=
+          Group.isDependsOn(static_cast<LibraryDependencies>(i)) << i;
     }
   }
 };
@@ -392,7 +398,7 @@ void recordRecognizedType(TypeLoc TL) {
   if (DpctGlobalInfo::isAnalysisModeEnabled())
     AnalysisModeStats::recordApisOrTypes(TL.getBeginLoc());
 }
-void setDependenciesInfo(const RuleGroups &Group) {
+void setDependenciesInfo(const RuleGroups &Group) noexcept {
   AnalysisModeStats::setDependencies(Group);
 }
 
