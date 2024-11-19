@@ -61,9 +61,9 @@ def err_ast_file_with_compiler_errors : Error<
 
 // SYCLomatic_CUSTOMIZATION begin
 def err_pch_different_branch : Error<
-    "PCH file is built by (%0), expected (%1)">;
+    "%select{PCH|module|AST}0 file '%1' is built by (%2), expected (%3)">;
 def err_pch_with_compiler_errors : Error<
-    "PCH file contains syntax errors">;
+    "%select{PCH|module|AST}0 file '%1' contains syntax errors">;
 // SYCLomatic_CUSTOMIZATION end
 
 def err_module_file_conflict : Error<
