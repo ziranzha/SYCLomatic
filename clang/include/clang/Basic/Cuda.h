@@ -48,11 +48,7 @@ enum class CudaVersion {
   CUDA_124,
   CUDA_125,
   CUDA_126,
-<<<<<<< HEAD
   FULLY_SUPPORTED = CUDA_126,
-=======
-  FULLY_SUPPORTED = CUDA_123,
->>>>>>> origin/sycl
   PARTIALLY_SUPPORTED =
       CUDA_126, // Partially supported. Proceed with a warning.
   NEW = 10000,  // Too new. Issue a warning, but allow using it.

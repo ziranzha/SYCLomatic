@@ -81,7 +81,6 @@ public:
   void InitializeSema(Sema &S) override;
   void ForgetSema() override;
 
-<<<<<<< HEAD
 #ifdef SYCLomatic_CUSTOMIZATION
   void HandleCXXExplicitFunctionInstantiation(
       const FunctionDecl *Specialization, const FunctionTypeLoc &FTL,
@@ -89,10 +88,7 @@ public:
       const TemplateArgumentListInfo &TAList) override;
 #endif // SYCLomatic_CUSTOMIZATION
 
-private:
-=======
 protected:
->>>>>>> origin/sycl
   std::vector<std::unique_ptr<ASTConsumer>> Consumers; // Owns these.
   std::unique_ptr<MultiplexASTMutationListener> MutationListener;
   std::unique_ptr<MultiplexASTDeserializationListener> DeserializationListener;
