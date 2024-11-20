@@ -57,16 +57,9 @@ public:
   static const std::string &getLibraryHelperNamespace();
   static const std::string &getCheckErrorMacroName();
 
-  struct ThrustFuncReplInfo {
-    std::string ReplName;
-    std::string ExtraParam;
-  };
-
   using MapTy = std::map<std::string, std::string>;
   using SetTy = std::set<std::string>;
-  using ThrustMapTy = std::map<std::string, ThrustFuncReplInfo>;
 
-  
   static std::unordered_map<std::string, std::shared_ptr<EnumNameRule>>
       EnumNamesMap;
   static const SetTy SupportedVectorTypes;
@@ -80,29 +73,15 @@ public:
       TypeNamesMap;
   static std::unordered_map<std::string, std::shared_ptr<ClassFieldRule>>
       ClassFieldMap;
-  static std::unordered_map<std::string, std::shared_ptr<TypeNameRule>>
-      CuDNNTypeNamesMap;
+
   static const MapTy Dim3MemberNamesMap;
   static const std::map<unsigned, std::string> ArrayFlagMap;
   static std::unordered_map<std::string, MacroMigrationRule> MacroRuleMap;
   static std::unordered_map<std::string, MetaRuleObject &> HeaderRuleMap;
-  static MapTy CUBEnumsMap;
-  static const SetTy ThrustFileExcludeSet;
-  static ThrustMapTy ThrustFuncNamesMap;
-  static std::map<std::string, clang::dpct::HelperFeatureEnum>
-      ThrustFuncNamesHelperFeaturesMap;
 
   static const MapTy DriverEnumsMap;
 
   static MapTy ITFName;
-  static MapTy RandomEngineTypeMap;
-  static MapTy RandomOrderingTypeMap;
-  static const std::map<std::string, std::string> RandomGenerateFuncMap;
-
-  static MapTy DeviceRandomGeneratorTypeMap;
-
-  static const std::map<std::string, std::vector<unsigned int>>
-      FFTPlanAPINeedParenIdxMap;
 
   static const std::unordered_set<std::string> CooperativeGroupsAPISet;
 
@@ -170,19 +149,6 @@ public:
 
   static std::map<clang::dpct::HelperFuncCatalog, std::string>
       CustomHelperFunctionMap;
-};
-
-class MigrationStatistics {
-private:
-  static std::map<std::string /*API Name*/, bool /*Is Migrated*/>
-      MigrationTable;
-  static std::map<std::string /*Type Name*/, bool /*Is Migrated*/>
-      TypeMigrationTable;
-
-public:
-  static bool IsMigrated(const std::string &APIName);
-  static std::vector<std::string> GetAllAPINames(void);
-  static std::map<std::string, bool> &GetTypeTable(void);
 };
 
 } // namespace dpct
