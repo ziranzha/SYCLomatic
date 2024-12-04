@@ -85,27 +85,11 @@ Level Zero or CUDA) should be put to SYCLomatic E2E test suite following
 - When writing your commit message, please make sure to follow
   [LLVM developer policies](
   https://llvm.org/docs/DeveloperPolicy.html#commit-messages) on the subject.
-<<<<<<< HEAD
 - For any SYCLomatic related commit, the `[SYCLomatic]` tag should be present in the
   commit message title. To a reasonable extent, additional tags can be used
   to signify the component changed, e.g.: `[ISSUE-NUM]`, `[DOC]`, `[NFC]`.
 - For product changes which require modification in tests outside of the current repository
   (see [Test SYCLomatic toolchain](GetStartedGuide.md#test-SYCLomatic)).
-=======
-  - [The seven rules of a great Git commit message](https://cbea.ms/git-commit)
-    are recommended read and follow.
-- To a reasonable extent, title tags can be used to signify the component
-  changed, e.g.: `[UR]`, `[CUDA]`, `[Doc]`.
-- Create a pull request (PR) for your changes following
-  [Creating a pull request instructions](https://help.github.com/articles/creating-a-pull-request/).
-  - Make sure PR has a good description explaining all of the changes made,
-    represented by commits in the PR.
-  - When PR is merged all commits are squashed and PR description is used as
-    the merged commit message.
-  - Consider splitting the large set of changes on small independent PRs that
-    can be reviewed, tested and merged independently.
-- For changes which require modification in tests outside of the current repository
->>>>>>> origin/sycl
   the commit message should contain the link to corresponding test PR.
 
 ### Review and acceptance testing
