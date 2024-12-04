@@ -1040,7 +1040,26 @@ void TypeInDeclRule::runRule(const MatchFinder::MatchResult &Result) {
       auto TSL = TL->getAs<TemplateSpecializationTypeLoc>();
       auto Parents = Result.Context->getParents(TSL);
       if (!Parents.empty()) {
-        if (auto NNSL = Parents[0].get<NestedNameSpecifierLoc>()) {
+        const auto *NNSL = Parents[0].get<NestedNameSpecifierLoc>();
+
+        // To migrate "type" in case like "typename
+        // thrust::iterator_difference<int
+        // *>::type Var".
+        if (NNSL && getNestedNameSpecifierString(*NNSL).find(
+                        "thrust::iterator_difference") != std::string::npos) {
+          auto Parents2 = Result.Context->getParents(*NNSL);
+          if (!Parents2.empty()) {
+            const auto *NNSL2 = Parents2[0].get<TypeLoc>();
+            if (NNSL2) {
+              Token Tok;
+              Lexer::getRawToken(TSL.getBeginLoc(), Tok, *SM, LOpts, true);
+              emplaceTransformation(new ReplaceText(
+                  NNSL2->getEndLoc(), 4, std::string("difference_type")));
+            }
+          }
+        }
+
+        if (const auto *NNSL = Parents[0].get<NestedNameSpecifierLoc>()) {
           if (replaceTemplateSpecialization(SM, LOpts, NNSL->getBeginLoc(),
                                             TSL)) {
             return;
