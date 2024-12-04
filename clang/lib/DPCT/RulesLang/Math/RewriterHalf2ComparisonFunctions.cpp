@@ -286,15 +286,10 @@ RewriterMap dpct::createHalf2ComparisonFunctionsRewriterMap() {
               EMPTY_FACTORY_ENTRY("__heq2_mask"),
               EMPTY_FACTORY_ENTRY("__heq2_mask"),
               EMPTY_FACTORY_ENTRY("__heq2_mask"),
-              CONDITIONAL_FACTORY_ENTRY(
-                  UseSYCLCompat,
-                  UNSUPPORT_FACTORY_ENTRY("__heq2_mask",
-                                          Diagnostics::UNSUPPORT_SYCLCOMPAT,
-                                          LITERAL("__heq2_mask")),
                   CALL_FACTORY_ENTRY(
                       "__heq2_mask",
                       CALL(MapNames::getDpctNamespace() + "compare_mask",
-                           ARG(0), ARG(1), LITERAL("std::equal_to<>()"))))))
+                           ARG(0), ARG(1), LITERAL("std::equal_to<>()")))))
       // __hequ2
       MATH_API_REWRITER_DEVICE(
           "__hequ2",
@@ -720,15 +715,10 @@ RewriterMap dpct::createHalf2ComparisonFunctionsRewriterMap() {
                                                   "ext::intel::math::hmax2_nan",
                                               ARG(0), ARG(1))))),
               EMPTY_FACTORY_ENTRY("__hmax2_nan"),
-              CONDITIONAL_FACTORY_ENTRY(
-                  UseSYCLCompat,
-                  UNSUPPORT_FACTORY_ENTRY("__hmax2_nan",
-                                          Diagnostics::UNSUPPORT_SYCLCOMPAT,
-                                          LITERAL("__hmax2_nan")),
                   CALL_FACTORY_ENTRY(
                       "__hmax2_nan",
                       CALL(MapNames::getDpctNamespace() + "fmax_nan", ARG(0),
-                           ARG(1))))))
+                           ARG(1)))))
       // __hmin2
       MATH_API_REWRITER_DEVICE_OVERLOAD(
           CheckArgType(0, "__half2"),
@@ -786,15 +776,10 @@ RewriterMap dpct::createHalf2ComparisonFunctionsRewriterMap() {
                                                   "ext::intel::math::hmin2_nan",
                                               ARG(0), ARG(1))))),
               EMPTY_FACTORY_ENTRY("__hmin2_nan"),
-              CONDITIONAL_FACTORY_ENTRY(
-                  UseSYCLCompat,
-                  UNSUPPORT_FACTORY_ENTRY("__hmin2_nan",
-                                          Diagnostics::UNSUPPORT_SYCLCOMPAT,
-                                          LITERAL("__hmin2_nan")),
                   CALL_FACTORY_ENTRY(
                       "__hmin2_nan",
                       CALL(MapNames::getDpctNamespace() + "fmin_nan", ARG(0),
-                           ARG(1))))))
+                           ARG(1)))))
       // __hne2
       MATH_API_REWRITER_DEVICE(
           "__hne2",
