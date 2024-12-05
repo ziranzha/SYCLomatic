@@ -1040,7 +1040,26 @@ void TypeInDeclRule::runRule(const MatchFinder::MatchResult &Result) {
       auto TSL = TL->getAs<TemplateSpecializationTypeLoc>();
       auto Parents = Result.Context->getParents(TSL);
       if (!Parents.empty()) {
-        if (auto NNSL = Parents[0].get<NestedNameSpecifierLoc>()) {
+        const auto *NNSL = Parents[0].get<NestedNameSpecifierLoc>();
+
+        // To migrate "type" in case like "typename
+        // thrust::iterator_difference<int
+        // *>::type Var".
+        if (NNSL && getNestedNameSpecifierString(*NNSL).find(
+                        "thrust::iterator_difference") != std::string::npos) {
+          auto Parents2 = Result.Context->getParents(*NNSL);
+          if (!Parents2.empty()) {
+            const auto *NNSL2 = Parents2[0].get<TypeLoc>();
+            if (NNSL2) {
+              Token Tok;
+              Lexer::getRawToken(TSL.getBeginLoc(), Tok, *SM, LOpts, true);
+              emplaceTransformation(new ReplaceText(
+                  NNSL2->getEndLoc(), 4, std::string("difference_type")));
+            }
+          }
+        }
+
+        if (const auto *NNSL = Parents[0].get<NestedNameSpecifierLoc>()) {
           if (replaceTemplateSpecialization(SM, LOpts, NNSL->getBeginLoc(),
                                             TSL)) {
             return;
@@ -1174,6 +1193,14 @@ void VectorTypeNamespaceRule::registerMatcher(MatchFinder &MF) {
                          hasDeclaration(namedDecl(Vec3Types()))))))
                     .bind("SizeofVector3Warn"),
                 this);
+
+  MF.addMatcher(
+      declRefExpr(
+          hasParent(implicitCastExpr(hasParent(cxxReinterpretCastExpr(hasType(
+              pointsTo(namedDecl(Vec3Types()).bind("nameVec3Name"))))))))
+          .bind("declRefExpr3Warn"),
+      this);
+
   MF.addMatcher(cxxRecordDecl(isDirectlyDerivedFrom(hasAnyName(
                                   "char1", "uchar1", "short1", "ushort1",
                                   "int1", "uint1", "long1", "ulong1", "float1",
@@ -1363,7 +1390,9 @@ void VectorTypeNamespaceRule::runRule(const MatchFinder::MatchResult &Result) {
     if (argTypeName != argCanTypeName)
       argTypeName += " (aka " + argCanTypeName + ")";
 
-    report(UETT, Diagnostics::SIZEOF_WARNING, true, argTypeName);
+    report(
+        UETT, Diagnostics::SIZEOF_WARNING, true, argTypeName,
+        "Check that the allocated memory size in the migrated code is correct");
   }
   // Runrule for __half_raw implicitly convert to half.
   if (auto DRE = getNodeAsType<DeclRefExpr>(Result, "halfRawExpr")) {
@@ -1384,6 +1413,17 @@ void VectorTypeNamespaceRule::runRule(const MatchFinder::MatchResult &Result) {
     emplaceTransformation(new ReplaceStmt(DRE, Replacement));
     return;
   }
+
+  if (const auto *DRE =
+          getNodeAsType<DeclRefExpr>(Result, "declRefExpr3Warn")) {
+
+    if (const auto *NameDecl =
+            getNodeAsType<NamedDecl>(Result, "nameVec3Name")) {
+      report(DRE, Diagnostics::SIZEOF_WARNING, true,
+             NameDecl->getNameAsString(), "You may need to adjust the code");
+    }
+  }
+
   if (const auto *D = getNodeAsType<Decl>(Result, "vectorTypeInTemplateArg")) {
     if (const auto *VD = getAssistNodeAsType<NamedDecl>(Result, "vectorDecl")) {
       auto TypeStr = VD->getNameAsString();
@@ -4553,7 +4593,9 @@ void KernelCallRule::runRule(
                                                   ExprContainSizeofType)) {
             if (ExprContainSizeofType) {
               report(ExprContainSizeofType->getBeginLoc(),
-                     Diagnostics::SIZEOF_WARNING, false, "local memory");
+                     Diagnostics::SIZEOF_WARNING, false, "local memory",
+                     "Check that the allocated memory size in the migrated "
+                     "code is correct");
             }
           }
         }
