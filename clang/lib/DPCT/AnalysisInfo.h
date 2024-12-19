@@ -1333,6 +1333,9 @@ public:
   static bool useExpVirtualMemory() {
     return getUsingExperimental<ExperimentalFeatures::Exp_VirtualMemory>();
   }
+  static bool useExpInOrderQueueEvents() {
+    return getUsingExperimental<ExperimentalFeatures::Exp_InOrderQueueEvents>();
+  }
   static bool useExpNonStandardSYCLBuiltins() {
     return getUsingExperimental<
         ExperimentalFeatures::Exp_NonStandardSYCLBuiltins>();
@@ -2933,7 +2936,8 @@ private:
     StmtList SamplerList;
     StmtList NdRangeList;
     StmtList CommandGroupList;
-
+    bool ImplicitSyncFlag = false;
+    bool DefaultStreamFlag = false;
     KernelPrinter &print(KernelPrinter &Printer);
     bool empty() const noexcept;
 
