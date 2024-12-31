@@ -100,8 +100,9 @@ void GraphicsInteropRule::runRule(
 
           if (FieldName == "flags") {
             clang::Expr::EvalResult evalResult;
-            if (dyn_cast<BinaryOperator>(BO)->getRHS()->EvaluateAsInt(
-                    evalResult, *Result.Context)) {
+            if (auto BinOp = dyn_cast<BinaryOperator>(BO);
+                BinOp &&
+                BinOp->getRHS()->EvaluateAsInt(evalResult, *Result.Context)) {
               ReplacedArg = "0";
             }
           }
@@ -145,8 +146,9 @@ void GraphicsInteropRule::runRule(
               {0x80, "cudaArrayDeferredMapping"}};
 
           clang::Expr::EvalResult evalResult;
-          if (dyn_cast<BinaryOperator>(BO)->getRHS()->EvaluateAsInt(
-                  evalResult, *Result.Context)) {
+          if (auto BinOp = dyn_cast<BinaryOperator>(BO);
+              BinOp &&
+              BinOp->getRHS()->EvaluateAsInt(evalResult, *Result.Context)) {
             int flag = evalResult.Val.getInt().getSExtValue();
             ReplacedArg = image_types.at(flag);
 

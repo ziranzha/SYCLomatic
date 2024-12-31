@@ -712,7 +712,7 @@ public:
   static bool isInRoot(SourceLocation SL) {
     return isInRoot(DpctGlobalInfo::getLocInfo(SL).first);
   }
-  static bool isInRoot(clang::tooling::UnifiedPath FilePath);
+  static bool isInRoot(const clang::tooling::UnifiedPath &FilePath);
   static bool isInAnalysisScope(SourceLocation SL) {
     return isInAnalysisScope(DpctGlobalInfo::getLocInfo(SL).first);
   }
@@ -2603,7 +2603,7 @@ protected:
   std::vector<std::shared_ptr<TextureObjectInfo>> TextureObjectList;
   FormatInfo FormatInformation;
   bool HasBody = false;
-  size_t DeclEnd;
+  size_t DeclEnd = 0;
   std::map<int, std::string> TemplateParameterDefaultValueMap;
   std::map<int, std::string> ParameterDefaultValueMap;
   static std::shared_ptr<DeviceFunctionInfo> &getFuncInfo(const FunctionDecl *);
