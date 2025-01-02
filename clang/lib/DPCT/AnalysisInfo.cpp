@@ -1187,7 +1187,7 @@ std::string DpctGlobalInfo::removeSymlinks(clang::FileManager &FM,
   }
   return NoSymlinks.str().str();
 }
-bool DpctGlobalInfo::isInRoot(clang::tooling::UnifiedPath FilePath) {
+bool DpctGlobalInfo::isInRoot(const clang::tooling::UnifiedPath &FilePath) {
   if (isChildPath(InRoot, FilePath)) {
     return !isExcluded(FilePath);
   } else {
@@ -5294,7 +5294,7 @@ void DeviceFunctionDecl::insertWrapper() {
   auto Repl = std::make_shared<ExtReplacement>(FilePath, DeclEnd, 0, WrapperStr,
                                                nullptr);
   Repl->setBlockLevelFormatFlag();
-  DpctGlobalInfo::getInstance().addReplacement(Repl);
+  DpctGlobalInfo::getInstance().addReplacement(std::move(Repl));
 }
 void DeviceFunctionDecl::collectInfoForWrapper(const FunctionDecl *FD) {
   if ((FD->getTemplatedKind() != FunctionDecl::TemplatedKind::TK_NonTemplate) &&
@@ -5308,12 +5308,6 @@ void DeviceFunctionDecl::collectInfoForWrapper(const FunctionDecl *FD) {
     HasBody = false;
   }
 
-  auto analyzeTypeLoc = [](const TypeLoc &TL) {
-    ExprAnalysis EA;
-    EA.analyze(TL);
-    return EA.getReplacedString();
-  };
-
   if (auto FTD = FD->getDescribedFunctionTemplate()) {
     if (auto TemplateParmsList = FTD->getTemplateParameters()) {
       for (size_t i = 0; i < TemplateParmsList->size(); ++i) {
@@ -5321,10 +5315,11 @@ void DeviceFunctionDecl::collectInfoForWrapper(const FunctionDecl *FD) {
         if (auto TTPD = dyn_cast<TemplateTypeParmDecl>(TemplateParm)) {
           if (TTPD->hasDefaultArgument() &&
               !TTPD->defaultArgumentWasInherited()) {
+            ExprAnalysis EA;
+            EA.analyze(
+                TTPD->getDefaultArgument().getTypeSourceInfo()->getTypeLoc());
             TemplateParameterDefaultValueMap[i] =
-                " = " + analyzeTypeLoc(TTPD->getDefaultArgument()
-                                           .getTypeSourceInfo()
-                                           ->getTypeLoc());
+                " = " + EA.getReplacedString();
           }
         } else if (auto NTTPD =
                        dyn_cast<NonTypeTemplateParmDecl>(TemplateParm)) {
@@ -5384,11 +5379,6 @@ void DeviceFunctionInfo::collectInfoForWrapper(const FunctionDecl *FD) {
     auto LocInfo = DpctGlobalInfo::getLocInfo(FD->getBeginLoc());
     auto &TemplateParametersInfo = DFInfoForWrapper->TemplateParametersInfo;
     auto &ParametersInfo = DFInfoForWrapper->ParametersInfo;
-    auto analyzeTypeLoc = [](const TypeLoc &TL) {
-      ExprAnalysis EA;
-      EA.analyze(TL);
-      return EA.getReplacedString();
-    };
 
     auto &Context = dpct::DpctGlobalInfo::getContext();
     auto Parents = Context.getParents(*FD);
@@ -5407,8 +5397,10 @@ void DeviceFunctionInfo::collectInfoForWrapper(const FunctionDecl *FD) {
             } else if (auto NTTPD =
                            dyn_cast<NonTypeTemplateParmDecl>(TemplateParm)) {
               std::string DefVal;
+              ExprAnalysis EA;
+              EA.analyze(NTTPD->getTypeSourceInfo()->getTypeLoc());
               TemplateParametersInfo.push_back(
-                  {analyzeTypeLoc(NTTPD->getTypeSourceInfo()->getTypeLoc()),
+                  {EA.getReplacedString(),
                    NTTPD->getNameAsString()});
             }
           }
@@ -5424,7 +5416,7 @@ void DeviceFunctionInfo::collectInfoForWrapper(const FunctionDecl *FD) {
     }
     if (!TemplateArgsStr.empty()) {
       DFInfoForWrapper->KernelForWrapper->setTemplateArgsStrForWrapper(
-          TemplateArgsStr);
+          std::move(TemplateArgsStr));
     }
     for (auto It = FD->param_begin(); It != FD->param_end(); It++) {
       ParametersInfo.push_back(
@@ -6268,7 +6260,8 @@ std::string KernelCallExpr::getQueueStr() const {
 }
 void KernelCallExpr::buildKernelInfo(const CUDAKernelCallExpr *KernelCall) {
   buildLocationInfo(KernelCall);
-  buildExecutionConfig(KernelCall->getConfig()->arguments(), KernelCall);
+  if (auto Config = KernelCall->getConfig())
+    buildExecutionConfig(Config->arguments(), KernelCall);
   buildNeedBracesInfo(KernelCall);
 }
 void KernelCallExpr::setIsInMacroDefine(const CUDAKernelCallExpr *KernelCall) {
